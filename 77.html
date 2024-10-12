@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Conocimiento del Manual de Inducción</title>
+    <link rel="icon" type="image/png" href="favicoon.png" sizes="16x16">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 20px;
+            margin: 0; /* Eliminar márgenes por defecto */
+        }
+        #header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        #logo {
+            height: 50px;
+            margin-bottom: 10px;
+        }
+        .section {
+            display: none; /* Ocultar todas las secciones inicialmente */
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .active {
+            display: block; /* Mostrar solo la sección activa */
+        }
+        h2 {
+            color: #C1211A;
+        }
+        button {
+            background-color: #C1211A;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background-color: #A21013;
+        }
+        label {
+            display: block;
+            margin: 10px 0;
+        }
+        #feedback {
+            display: none; /* Ocultar feedback inicial */
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .draggable {
+            margin: 5px;
+            padding: 10px;
+            background-color: #ddd;
+            border-radius: 4px;
+            cursor: move;
+        }
+
+        #dropzone {
+            display: flex;
+            flex-direction: column;
+            border: 2px dashed #aaa;
+            padding: 10px;
+            border-radius: 5px;
+            min-height: 150px;
+        }
+    </style>
+    <script>
+        let currentSection = 0; // Índice de la sección actual
+        const totalSections = 10; // Total de secciones
+
+        function nextSection(direction) {
+            document.getElementById(`section${currentSection + 1}`).classList.remove('active');
+            currentSection += direction;
+
+            if (currentSection < 0) currentSection = 0;
+            if (currentSection >= totalSections) {
+                displayScore();
+                return;
+            }
+
+            document.getElementById(`section${currentSection + 1}`).classList.add('active');
+        }
+
+        function displayScore() {
+            let score = 0;
+
+            for (let i = 1; i <= totalSections; i++) {
+                const selected = document.querySelector(`input[name="pregunta${i}"]:checked`);
+                if (selected && selected.value === "1") {
+                    score++;
+                }
+            }
+
+            document.getElementById('score').textContent = score;
+            document.getElementById('feedback').style.display = 'block'; // Mostrar feedback
+        }
+
+        window.onload = function() {
+            document.getElementById('intro').style.display = 'block'; // Mostrar introducción
+        };
+
+        function startQuestionnaire() {
+            document.getElementById('intro').style.display = 'none'; // Ocultar introducción
+            currentSection = 0; // Reiniciar la sección actual
+            nextSection(1); // Mostrar la primera sección del cuestionario
+        }
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const data = ev.dataTransfer.getData("text");
+            ev.target.appendChild(document.getElementById(data));
+        }
+
+        function validateOrganigrama() {
+            const order = [...document.querySelectorAll('#dropzone .draggable')].map(item => item.id);
+            const correctOrder = ['item1', 'item2', 'item3', 'item4', 'item5'];
+
+            if (JSON.stringify(order) === JSON.stringify(correctOrder)) {
+                alert("¡Organigrama ordenado correctamente!");
+            } else {
+                alert("El orden del organigrama es incorrecto.");
+            }
+        }
+    </script>
+</head>
+<body>
+
+    <div id="header">
+        <img src="header.png" alt="Logo del Laboratorio" id="logo">
+        <h1>Test de Conocimiento del Manual de Inducción</h1>
+    </div>
+
+    <!-- Introducción -->
+    <div id="intro" class="section active">
+        <h2>Bienvenido a la Encuesta de Calidad del Laboratorio</h2>
+        <p>Esta encuesta tiene como objetivo evaluar nuestra calidad de servicio y asegurar que estamos cumpliendo con sus expectativas. Por favor, responda a las siguientes preguntas con sinceridad.</p>
+        <button onclick="startQuestionnaire()">Comenzar Cuestionario</button>
+    </div>
+
+    <!-- Secciones de preguntas -->
+    <div id="section1" class="section">
+        <h2>Nuestra Política</h2>
+        <p>¿Cuál es el objetivo fundamental de la política de calidad del Laboratorio?</p>
+        <label><input type="radio" name="pregunta1" value="1" required> Ofrecer servicios al menor costo posible.</label>
+        <label><input type="radio" name="pregunta1" value="0"> Conducir el laboratorio con un nivel de excelencia.</label>
+        <label><input type="radio" name="pregunta1" value="0"> Promover la competencia entre laboratorios.</label>
+        <button onclick="nextSection(1)">Siguiente</button>
+    </div>
+
+    <div id="section2" class="section">
+        <h2>Nuestra Visión y Misión</h2>
+        <p>¿Nuestro fin es ofrecer a la comunidad un servicio de excelencia en:</p>
+        <label><input type="checkbox" name="pregunta2" value="1"> Análisis y asesoramiento</label>
+        <label><input type="checkbox" name="pregunta2" value="1"> Docencia e investigación</label>
+        <label><input type="checkbox" name="pregunta2" value="1"> Implementación y control de sistemas de calidad</label>
+        <label><input type="checkbox" name="pregunta2" value="0"> Ninguna</label>
+        <button onclick="nextSection(-1)">Anterior</button>
+        <button onclick="nextSection(1)">Siguiente</button>
+    </div>
+
+    <div id="section3" class="section">
+        <h2>Acreditaciones y Certificaciones</h2>
+        <p>¿Qué certificaciones tiene el laboratorio?</p>
+        <label><input type="checkbox" name="pregunta3" value="1"> ISO 9001</label>
+        <label><input type="checkbox" name="pregunta3" value="1"> ISO 14001</label>
+        <label><input type="checkbox" name="pregunta3" value="1"> ISO 17025</label>
+        <label><input type="checkbox" name="pregunta3" value="0"> Ninguna</label>
+        <button onclick="nextSection(-1)">Anterior</button>
+        <button onclick="nextSection(1)">Siguiente</button>
+    </div>
+
+    <!-- Organigrama -->
+    <div id="section4" class="section">
+        <h2>Organigrama</h2>
+        <p>Arrastra y suelta los elementos para seleccionar el orden correcto del organigrama del laboratorio:</p>
+        <div id="dropzone" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <p>Arrastra aquí los elementos en el orden correcto:</p>
+        </div>
+        <div>
+            <div id="item1" class="draggable" draggable="true" ondragstart="drag(event)">DIRECTORIO</div>
+            <div id="item2" class="draggable" draggable="true" ondragstart="drag(event)">DIRECTOR EJECUTIVO</div>
+            <div id="item3" class="draggable" draggable="true" ondragstart="drag(event)">Planificación Estratégica y Control de Gestión</div>
+            <div id="item4" class="draggable" draggable="true" ondragstart="drag(event)">Gestión de Calidad</div>
+            <div id="item5" class="draggable" draggable="true" ondragstart="drag(event)">Recursos Humanos</div>
+        </div>
+        <button onclick="validateOrganigrama()">Validar Organigrama</button>
+        <button onclick="nextSection(-1)">Anterior</button>
+        <button onclick="nextSection(1)">Siguiente</button>
+    </div>
+
+    <div id="section5" class="section">
+        <h2>Creatividad e Innovación</h2>
+        <p>El valor de la Creatividad e Innovación se refiere a:</p>
+        <label><input type="radio" name="pregunta4" value="0"> Promover la rutina y mantener los métodos tradicionales sin cambios.</label>
+        <label><input type="radio" name="pregunta4" value="1"> Promover el cambio que introduce novedades, nuevas propuestas e ideas que nos permitan destacarnos y seguir creciendo.</label>
+        <label><input type="radio" name="pregunta4" value="0"> Fomentar la adopción de nuevas tecnologías sin cuestionar su eficacia.</label>
+        <button onclick="nextSection(-1)">Anterior</button>
+        <button onclick="nextSection(1)">Siguiente</button>
+    </div>
+
+    <div id="section6" class="section">
+        <h2>Accidentes Cortopunzantes</h2>
+        <p>¿Qué se hace en el caso de que sufras un accidente cortopunzante?</p>
+        <label><input type="radio" name="accidente" value="1"> Si proviene de una fuente desconocida: Se hace tratamiento con ARV.</label>
+        <label><input type="radio" name="accidente" value="0"> Se espera a que se detenga el sangrado.</label>
+        <label><input type="radio" name="accidente" value="0"> Se llama al supervisor.</label>
+        <button onclick="nextSection(-1)">Anterior</button>
+        <button onclick="nextSection(1)">Siguiente</button>
+    </div>
+
+    <div id="section7" class="section">
+        <h2>Medidas de Seguridad</h2>
+        <p>¿Qué medidas de seguridad son fundamentales en el laboratorio?</p>
+        <label><input type="checkbox" name="medidas" value="1"> Usar el equipo de protección personal (EPP).</label>
+        <label><input type="checkbox" name="medidas" value="1"> Informar a su superior de cualquier anomalía.</label>
+        <label><input type="checkbox" name="medidas" value="0"> Mantener el área de trabajo desordenada.</label>
+        <button onclick="nextSection(-1)">Anterior</button>
+        <button onclick="nextSection(1)">Siguiente</button>
+    </div>
+
+    <div id="section8" class="section">
+        <h2>Protocolos de Emergencia</h2>
+        <p>¿Qué hacer en caso de un derrame químico?</p>
+        <label><input type="radio" name="emergencia" value="1"> Actuar inmediatamente y seguir el protocolo establecido.</label>
+        <label><input type="radio" name="emergencia" value="0"> Ignorar el derrame si no parece peligroso.</label>
+        <label><input type="radio" name="emergencia" value="0"> Esperar a que alguien más lo maneje.</label>
+        <button onclick="nextSection(-1)">Anterior</button>
+        <button onclick="nextSection(1)">Siguiente</button>
+    </div>
+
+    <div id="section9" class="section">
+        <h2>Registros y Trazabilidad</h2>
+        <p>¿Por qué son importantes los registros y la trazabilidad en el laboratorio?</p>
+        <label><input type="radio" name="trazabilidad" value="1"> Para asegurar la calidad y la responsabilidad en los resultados.</label>
+        <label><input type="radio" name="trazabilidad" value="0"> No son importantes si se tiene buena memoria.</label>
+        <label><input type="radio" name="trazabilidad" value="0"> Son solo un requisito administrativo.</label>
+        <button onclick="nextSection(-1)">Anterior</button>
+        <button onclick="nextSection(1)">Siguiente</button>
+    </div>
+
+    <div id="section10" class="section">
+        <h2>Última Sección</h2>
+        <p>Gracias por completar el cuestionario. Su opinión es muy importante para nosotros.</p>
+        <button onclick="nextSection(-1)">Anterior</button>
+        <button onclick="displayScore()">Finalizar</button>
+    </div>
+
+    <div id="feedback">
+        <h2>¡Gracias por completar el cuestionario!</h2>
+        <p>Su puntaje total es: <span id="score"></span>/10</p>
+    </div>
+
+</body>
+</html>
+
